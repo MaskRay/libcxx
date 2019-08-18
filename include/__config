@@ -1102,7 +1102,7 @@ _LIBCPP_FUNC_VIS extern "C" void __sanitizer_annotate_contiguous_container(
 #define __STDCPP_THREADS__ 1
 #endif
 
-// The glibc and Bionic implementation of pthreads implements
+// The glibc, Bionic and musl implementation of pthreads implements
 // pthread_mutex_destroy as nop for regular mutexes. Additionally, Win32
 // mutexes have no destroy mechanism.
 //
@@ -1112,9 +1112,10 @@ _LIBCPP_FUNC_VIS extern "C" void __sanitizer_annotate_contiguous_container(
 //
 // TODO(EricWF): Enable this optimization on Bionic after speaking to their
 //               respective stakeholders.
-#if (defined(_LIBCPP_HAS_THREAD_API_PTHREAD) && defined(__GLIBC__)) \
-  || defined(_LIBCPP_HAS_THREAD_API_WIN32)
-# define _LIBCPP_HAS_TRIVIAL_MUTEX_DESTRUCTION
+#if (defined(_LIBCPP_HAS_THREAD_API_PTHREAD) &&                                \
+     (defined(__GLIBC__) || defined(_LIBCPP_HAS_MUSL_LIBC))) ||                \
+    defined(_LIBCPP_HAS_THREAD_API_WIN32)
+#define _LIBCPP_HAS_TRIVIAL_MUTEX_DESTRUCTION
 #endif
 
 // Destroying a condvar is a nop on Windows.
